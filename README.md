@@ -30,6 +30,26 @@
 - **Windowsの場合**: `ffmpeg-master-latest-win64-gpl-shared.zip` を選んで解凍します。
 - 解凍後、`ffmpeg.exe`、`ffplay.exe`、`ffprobe.exe` をツールと同じフォルダに配置します。
 
+- 最終的なディレクトリ構成
+
+
+<pre>
+├── ffmpeg.exe       # FFmpeg実行ファイル
+├── ffplay.exe       # FFplay実行ファイル
+├── ffprobe.exe      # FFprobe実行ファイル
+├── input.mp4        # 変換するMP4ファイル（任意）
+├── main.bat         # バッチファイル（Windows用）
+├── main.py          # Pythonスクリプト
+└── output.webm      # 変換後のWEBMファイル（出力先）
+</pre>
+
+
+
+
+
+
+
+
 ### 2. ツールの実行
 
 - `main.py` を実行して、変換したいMP4ファイルを選択します。
