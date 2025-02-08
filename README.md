@@ -40,10 +40,3 @@
 ## 📜 ライセンス
 
 MIT License（自由に使用・改変可能）
-
-補足
-FFmpegのダウンロード方法
-FFmpeg-Buildsのリリースページから、使用しているOSに適したファイル（Windows用ならffmpeg-master-latest-win64-gpl-shared.zip）をダウンロードして解凍してください。解凍後の ffmpeg.exe、ffplay.exe、ffprobe.exe を、main.py と同じフォルダに配置します。
-
-出力先
-変換後のファイルは、入力ファイルと同じフォルダに output.webm として保存されます。
