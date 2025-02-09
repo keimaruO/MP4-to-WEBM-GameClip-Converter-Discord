@@ -9,26 +9,34 @@ from datetime import datetime
 import shlex
 
 # ===== 設定パラメータ =====
-# ターゲットサイズ（バイト）。
-# ここでは安全マージンを見て約9.5MB (9961472 バイト) を採用
+# ターゲットファイルサイズ（バイト）。例として約9.5MB (9961472 バイト)
 TARGET_SIZE = 9961472
-# もしくは 9.9MB 程度にしたい場合は（例）：
-# TARGET_SIZE = 10380902
 
 # 音声ビットレート（bps）
 AUDIO_BITRATE = 64000
 
-# GPU を使ってデコード高速化を試みる（ffmpeg の -hwaccel cuda を使用）。
-# ※ libvpx のエンコード自体は GPU 対応していないため、
-#    GPU が使える場合は入力のデコードが多少速くなる可能性があります。
+# GPU を使った高速デコード（ffmpeg の -hwaccel cuda）
 USE_GPU = True
 
 # エンコード時の追加オプション（エンコード速度と画質のトレードオフ）
-# ※ 2パスエンコードの場合、-deadline realtime は使用できないため削除。
 EXTRA_VP8_OPTS = ["-cpu-used", "4"]
 
+# ★ 解像度変更および自動調整の設定 ★
+# 出力解像度（例：(640, 360)）。None にすれば元の解像度維持。
+TARGET_RESOLUTION = (640, 360)
+
+# GRAYSCALE が True ならモノクロ変換（今回はフルカラーなので通常 False）
+GRAYSCALE = False
+
+# ビットレートが低すぎるとき、自動的に TARGET_RESOLUTION を縮小するかどうか
+AUTO_RESOLUTION_ADJUST = True
+MIN_VIDEO_BITRATE_K = 50  # 最低映像ビットレート下限（kbit/s）
+
+# ★ フレームレート可変の設定 ★
+# 動きの少ないシーンは重複フレームを除去して実質的なフレームレートを下げる
+ENABLE_VFR = True
+
 # ===== ffmpeg/ffprobe のパス設定 =====
-# 本スクリプトと同じフォルダに ffmpeg.exe, ffprobe.exe がある前提（Windows）
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if os.name == "nt":
     FFMPEG = os.path.join(script_dir, "ffmpeg.exe")
@@ -42,7 +50,7 @@ else:
 # ===== 入力ファイル選択ダイアログ =====
 def select_input_file():
     root = tk.Tk()
-    root.withdraw()  # メインウィンドウを表示しない
+    root.withdraw()  # メインウィンドウ非表示
     file_path = filedialog.askopenfilename(
         title="入力動画ファイルを選択してください",
         filetypes=[("Video Files", "*.mp4;*.mkv;*.avi;*.mov;*.flv;*.wmv;*.webm"), ("All Files", "*.*")]
@@ -51,7 +59,9 @@ def select_input_file():
     return file_path
 
 def get_video_duration(input_file):
-    """ffprobe を使用して動画の再生時間（秒）を取得する"""
+    """
+    ffprobe を使用して動画の再生時間（秒）を取得する
+    """
     cmd = [
         FFPROBE,
         "-v", "error",
@@ -69,8 +79,10 @@ def get_video_duration(input_file):
         sys.exit(1)
 
 def generate_output_filename(input_file):
-    """出力ファイル名を決定。
-       output.webm が存在する場合は日時を付与したファイル名とする"""
+    """
+    出力ファイル名を生成。
+    既存の output.webm がある場合はタイムスタンプを付与
+    """
     base_dir = os.path.dirname(input_file)
     base_name = "output"
     ext = ".webm"
@@ -80,8 +92,26 @@ def generate_output_filename(input_file):
         output_path = os.path.join(base_dir, f"{base_name}_{timestamp}{ext}")
     return output_path
 
+def build_vf_filters():
+    """
+    出力時の映像フィルタを構築する。
+    ・TARGET_RESOLUTION によるスケール変更
+    ・GRAYSCALE (必要なら)
+    ・ENABLE_VFR が True なら mpdecimate で重複フレームの除去（可変フレームレート）
+    """
+    filters = []
+    if TARGET_RESOLUTION is not None:
+        filters.append("scale={}:{}".format(TARGET_RESOLUTION[0], TARGET_RESOLUTION[1]))
+    if GRAYSCALE:
+        filters.append("format=gray")
+    if ENABLE_VFR:
+        filters.append("mpdecimate")
+    return filters
+
 def run_ffmpeg_pass(pass_num, input_file, video_bitrate_k, output_file=None):
-    """1パス目、2パス目の ffmpeg コマンドを構築して実行する"""
+    """
+    1パス目（解析用）と2パス目（実際のエンコード）の ffmpeg コマンドを構築・実行
+    """
     cmd = [FFMPEG]
     
     if USE_GPU:
@@ -89,7 +119,12 @@ def run_ffmpeg_pass(pass_num, input_file, video_bitrate_k, output_file=None):
     
     cmd += ["-y", "-i", input_file]
     
-    # 統計ファイルのパスを明示的に指定
+    # フィルタチェーンの構築
+    vf_filters = build_vf_filters()
+    if vf_filters:
+        cmd += ["-vf", ",".join(vf_filters)]
+    
+    # 2パスエンコード用の統計ファイルのパスを明示的に指定
     stats_file = os.path.join(os.getcwd(), "ffmpeg2pass")
     cmd += ["-passlogfile", stats_file]
     
@@ -97,13 +132,17 @@ def run_ffmpeg_pass(pass_num, input_file, video_bitrate_k, output_file=None):
     cmd += EXTRA_VP8_OPTS
     cmd += ["-pass", str(pass_num)]
     
+    # 2パス目（最終エンコード）のみ、可変フレームレート出力のために -vsync vfr を指定
+    if pass_num == 2 and ENABLE_VFR:
+        cmd += ["-vsync", "vfr"]
+    
     if pass_num == 1:
         cmd += ["-an", "-f", "webm", NULL_DEV]
     else:
         cmd += ["-c:a", "libvorbis", "-b:a", "64k", output_file]
     
     print("実行コマンド:")
-    print(" ".join(shlex.quote(x) for x in cmd))
+    print(" ".join(shlex.quote(arg) for arg in cmd))
     
     try:
         subprocess.run(cmd, check=True)
@@ -111,51 +150,10 @@ def run_ffmpeg_pass(pass_num, input_file, video_bitrate_k, output_file=None):
         messagebox.showerror("エラー", f"ffmpeg のパス {pass_num} エンコードでエラーが発生しました\n{e}")
         sys.exit(1)
 
-def main():
-    # 入力ファイル選択
-    input_file = select_input_file()
-    if not input_file:
-        print("入力ファイルが選択されなかったため終了します。")
-        sys.exit(0)
-    print(f"入力ファイル: {input_file}")
-    
-    # ffprobe により動画の長さを取得
-    duration = get_video_duration(input_file)
-    print(f"動画の長さ: {duration:.2f} 秒")
-    
-    # ターゲットファイルサイズ（バイト）から総ビット数（1バイト=8ビット）を計算
-    target_bits = TARGET_SIZE * 8
-    # 音声分に必要なビット数 = AUDIO_BITRATE * duration
-    audio_bits = AUDIO_BITRATE * duration
-    # 映像に割り当て可能なビット数
-    video_bits = target_bits - audio_bits
-    if video_bits <= 0:
-        messagebox.showerror("エラー", "動画の長さに対してターゲットサイズが小さすぎます。")
-        sys.exit(1)
-    
-    # 映像の平均ビットレート (bps)
-    video_bitrate = video_bits / duration
-    # ffmpeg には kbit/s 単位で指定（整数）
-    video_bitrate_k = int(video_bitrate / 1000)
-    
-    print(f"設定する映像ビットレート: {video_bitrate_k} kbit/s")
-    print(f"音声ビットレート: {AUDIO_BITRATE//1000} kbit/s")
-    
-    # 出力ファイル名を生成（既存ファイルがある場合は日時を付与）
-    output_file = generate_output_filename(input_file)
-    print(f"出力ファイル: {output_file}")
-    
-    # ffmpeg の 2パスエンコードを実行
-    print("=== 1パス目 (解析用) ===")
-    run_ffmpeg_pass(1, input_file, video_bitrate_k)
-    print("=== 2パス目 (実際のエンコード) ===")
-    run_ffmpeg_pass(2, input_file, video_bitrate_k, output_file=output_file)
-    
-    print("エンコードが完了しました。")
-    messagebox.showinfo("完了", f"エンコードが完了しました。\n出力ファイル: {output_file}")
-
-    # クリーンアップ処理
-    # ffmpeg によって生成される 2-pass のログファイルを削除
+def cleanup_logfiles():
+    """
+    ffmpeg の2パスエンコードで生成される一時ログファイルを削除する
+    """
     for suffix in ["-0.log", "-0.log.mbtree"]:
         fpath = os.path.join(os.getcwd(), "ffmpeg2pass" + suffix)
         if os.path.exists(fpath):
@@ -163,6 +161,60 @@ def main():
                 os.remove(fpath)
             except Exception:
                 pass
+
+def main():
+    global TARGET_RESOLUTION  # 自動解像度調整のためにグローバルで変更可能にする
+    # --- 入力ファイル選択 ---
+    input_file = select_input_file()
+    if not input_file:
+        print("入力ファイルが選択されなかったため終了します。")
+        sys.exit(0)
+    print(f"入力ファイル: {input_file}")
+    
+    # --- 動画の再生時間取得 ---
+    duration = get_video_duration(input_file)
+    print(f"動画の長さ: {duration:.2f} 秒")
+    
+    # --- ターゲットファイルサイズから総ビット数計算 ---
+    target_bits = TARGET_SIZE * 8
+    audio_bits = AUDIO_BITRATE * duration
+    video_bits = target_bits - audio_bits
+    if video_bits <= 0:
+        messagebox.showerror("エラー", "動画の長さに対してターゲットサイズが小さすぎます。")
+        sys.exit(1)
+    
+    # --- 映像ビットレート算出 ---
+    video_bitrate = video_bits / duration
+    video_bitrate_k = int(video_bitrate / 1000)
+    print(f"設定する映像ビットレート: {video_bitrate_k} kbit/s")
+    print(f"音声ビットレート: {AUDIO_BITRATE // 1000} kbit/s")
+    
+    # --- ビットレートが低すぎる場合、自動解像度調整（できるだけ高品質を維持） ---
+    if video_bitrate_k < MIN_VIDEO_BITRATE_K:
+        if AUTO_RESOLUTION_ADJUST and TARGET_RESOLUTION is not None:
+            factor = (video_bitrate_k / MIN_VIDEO_BITRATE_K) ** 0.5
+            new_width = max(int(TARGET_RESOLUTION[0] * factor), 16)
+            new_height = max(int(TARGET_RESOLUTION[1] * factor), 16)
+            print(f"【自動調整】映像ビットレートが低いため、解像度を {TARGET_RESOLUTION} から ({new_width}, {new_height}) に調整します。")
+            TARGET_RESOLUTION = (new_width, new_height)
+        else:
+            print("【注意】算出された映像ビットレートが非常に低いため、画質が著しく低下する可能性があります。")
+    
+    # --- 出力ファイル名生成 ---
+    output_file = generate_output_filename(input_file)
+    print(f"出力ファイル: {output_file}")
+    
+    # --- 2パスエンコード実行 ---
+    print("=== 1パス目 (解析用) ===")
+    run_ffmpeg_pass(1, input_file, video_bitrate_k)
+    print("=== 2パス目 (エンコード) ===")
+    run_ffmpeg_pass(2, input_file, video_bitrate_k, output_file=output_file)
+    
+    print("エンコードが完了しました。")
+    messagebox.showinfo("完了", f"エンコードが完了しました。\n出力ファイル: {output_file}")
+    
+    # --- ログファイル削除 ---
+    cleanup_logfiles()
 
 if __name__ == "__main__":
     main()
