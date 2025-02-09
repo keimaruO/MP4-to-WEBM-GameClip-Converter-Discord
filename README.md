@@ -94,7 +94,6 @@ Nitro非会員様こんにちは。
 ### 🎮 Overview
 
 This tool converts MP4 videos into WEBM format and compresses them to under 10MB for free Discord users.  
-(Include detailed explanation, usage instructions, installation guide, etc.)
 
 ### 📂 Quick Usage
 
