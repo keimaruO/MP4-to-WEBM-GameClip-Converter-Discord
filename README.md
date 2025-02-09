@@ -1,12 +1,18 @@
-# 🎮 MP4からWEBMへDiscord用10MBゲームクリップ変換
+[English](#english)
+# MP4からWEBMへDiscord用10MBゲームクリップ変換 / MP4 to WEBM Converter for Discord
 
-このツールは、Discord無料ユーザー向けにMP4動画をWEBMに変換し、10MB以下に圧縮します。
 
-自動的に画質調整し9.5MB～9.9MBの最適なサイズに変換
 
-これでNitro課金しなくても快適にゲームクリップを友達共有できる、はず(´･_･` )
+---
 
-## 📂 ざっとした使い方
+## 日本語
+
+### 🎮 概要
+
+このツールは、Discord無料ユーザー向けにMP4動画をWEBMに変換し、10MB以下に圧縮します。  
+（詳細な説明や使い方、インストール方法などをここに記載）
+
+### 📂 ざっとした使い方
 
 1. 変換したい **MP4ファイル** を用意
 2. `start.bat` を実行し、任意のMP4ファイルを選択
@@ -77,15 +83,14 @@
 
 ---
 
-# 🎮 MP4 to WEBM Game Clip Converter for Discord (10MB Limit)
+## English
 
-This tool converts MP4 videos into WEBM format and compresses them to under 10MB for free Discord users.
+### 🎮 Overview
 
-It automatically adjusts the quality so that the final file is optimally sized between 9.5MB and 9.9MB.
+This tool converts MP4 videos into WEBM format and compresses them to under 10MB for free Discord users.  
+(Include detailed explanation, usage instructions, installation guide, etc.)
 
-Now you can comfortably share your game clips with friends without having to pay for Nitro (´･_･`).
-
-## 📂 Quick Usage
+### 📂 Quick Usage
 
 1. Prepare the **MP4 file** you want to convert.
 2. Run `start.bat` and select your desired MP4 file.
