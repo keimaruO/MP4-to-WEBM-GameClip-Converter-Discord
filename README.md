@@ -34,13 +34,13 @@ Nitro非会員様こんにちは。
 1. **FFmpegのダウンロード**  
    - [FFmpeg-Buildsの最新リリースページ](https://github.com/yt-dlp/FFmpeg-Builds/releases/tag/latest)から、使用中のOSに合ったFFmpegビルドをダウンロードしてください。  
    - **Windowsの場合：**  
-     `ffmpeg-master-latest-win64-gpl-shared.zip` を選び、解凍します。
+     `ffmpeg-master-latest-win64-gpl-shared.zip` を選び、任意の場所に解凍します。
 
 2. **Pythonのインストール**  
    - まだPythonをインストールしていない場合は、公式サイトからインストールしてください。
 
 3. **プロジェクトのダウンロード**  
-   - [GitHubリポジトリ](https://github.com/keimaruO/MP4-to-WEBM-GameClip-Converter-Discord)からプロジェクトをダウンロードし、任意の場所に展開してください。
+   - [このGitHubリポジトリ](https://github.com/keimaruO/MP4-to-WEBM-GameClip-Converter-Discord)からプロジェクトをダウンロードし、任意の場所に展開してください。
 
 ### 2. ファイルの配置
 
