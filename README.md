@@ -53,7 +53,9 @@ Nitro非会員様こんにちは。
 ├── input.mp4        # 変換するMP4ファイル（任意）
 ├── main.bat         # バッチファイル（Windows用）
 ├── main.py          # Pythonスクリプト
-└── output.webm      # 変換後のWEBMファイル（出力先）
+├── output.webm      # 変換後のWEBMファイル（出力先）
+└── start.bat        # 実行ファイル
+   
 </pre>
 
 
@@ -130,6 +132,7 @@ Your final directory structure should look like this:
 ├── main.bat         # Batch file (for Windows)
 ├── main.py          # Python script
 └── output.webm      # Converted WEBM file (output)
+└── start.bat        # Batch file
 </pre>
 
 ### 3. Run the Tool
