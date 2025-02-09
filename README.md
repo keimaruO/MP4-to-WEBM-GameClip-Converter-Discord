@@ -116,7 +116,7 @@ That's it.
    - If you haven't installed Python yet, download it from the official website.
 
 3. **Download the Project**  
-   - Download the project from the [GitHub repository](https://github.com/keimaruO/MP4-to-WEBM-GameClip-Converter-Discord) and extract it to a location of your choice.
+   - Download the project from the [This GitHub repository](https://github.com/keimaruO/MP4-to-WEBM-GameClip-Converter-Discord) and extract it to a location of your choice.
 
 ### 2. Organize Your Files
 
