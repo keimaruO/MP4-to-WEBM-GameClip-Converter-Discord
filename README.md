@@ -1,5 +1,5 @@
 [English](#english)
-# MP4からWEBMへDiscord用10MBゲームクリップ変換
+# Discord Nitroなくてもちょうどいい具合に10MB以内に動画を圧縮して遅れるようにするやつ
 
 
 
