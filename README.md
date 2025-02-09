@@ -1,5 +1,5 @@
 [English](#english)
-# MP4からWEBMへDiscord用10MBゲームクリップ変換 / MP4 to WEBM Converter for Discord
+# MP4からWEBMへDiscord用10MBゲームクリップ変換
 
 
 
