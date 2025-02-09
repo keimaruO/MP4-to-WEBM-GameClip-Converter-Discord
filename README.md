@@ -76,3 +76,80 @@
 自由に使用および改変することができます。
 
 ---
+
+# 🎮 MP4 to WEBM Game Clip Converter for Discord (10MB Limit)
+
+This tool converts MP4 videos into WEBM format and compresses them to under 10MB for free Discord users.
+
+It automatically adjusts the quality so that the final file is optimally sized between 9.5MB and 9.9MB.
+
+Now you can comfortably share your game clips with friends without having to pay for Nitro (´･_･`).
+
+## 📂 Quick Usage
+
+1. Prepare the **MP4 file** you want to convert.
+2. Run `start.bat` and select your desired MP4 file.
+3. After conversion, `output.webm` will be saved in the **same folder**.
+
+That's it.
+
+## 📂 Installation Guide
+
+### 1. Prepare the Required Files
+
+1. **Download FFmpeg**  
+   - Visit the [FFmpeg-Builds latest release page](https://github.com/yt-dlp/FFmpeg-Builds/releases/tag/latest) and download the FFmpeg build that matches your operating system.  
+   - **For Windows:**  
+     Choose `ffmpeg-master-latest-win64-gpl-shared.zip` and extract it.
+
+2. **Install Python**  
+   - If you haven't installed Python yet, download it from the official website.
+
+3. **Download the Project**  
+   - Download the project from the [GitHub repository](https://github.com/keimaruO/MP4-to-WEBM-GameClip-Converter-Discord) and extract it to a location of your choice.
+
+### 2. Organize Your Files
+
+Your final directory structure should look like this:
+
+<pre>
+├── ffmpeg.exe       # FFmpeg executable
+├── ffplay.exe       # FFplay executable
+├── ffprobe.exe      # FFprobe executable
+├── input.mp4        # MP4 file to be converted (optional)
+├── main.bat         # Batch file (for Windows)
+├── main.py          # Python script
+└── output.webm      # Converted WEBM file (output)
+</pre>
+
+### 3. Run the Tool
+
+1. **How to Run**  
+   - Execute `start.bat` and select the MP4 file you want to convert.
+
+2. **Conversion Completion**  
+   - Once the conversion is finished, `output.webm` will appear in the same folder.
+
+---
+
+## Optional Settings
+
+The tool offers the following configuration options. Adjust the values as needed:
+
+- **TARGET_SIZE**  
+  Target file size (default: ~9.5MB)
+
+- **AUDIO_BITRATE**  
+  Audio bitrate (default: 64kbps)
+
+- **USE_GPU**  
+  Option to use the GPU to speed up the decoding process
+
+---
+
+## License
+
+This tool is released under the **MIT License**.  
+Feel free to use and modify it as you like.
+
+---
