@@ -40,7 +40,7 @@ Nitro非会員様こんにちは。
    - まだPythonをインストールしていない場合は、公式サイトからインストールしてください。
 
 3. **プロジェクトのダウンロード**  
-   - [このGitHubリポジトリ](https://github.com/keimaruO/MP4-to-WEBM-GameClip-Converter-Discord)からプロジェクトをダウンロードし、任意の場所に展開してください。
+   - [このGitHubリポジトリ](https://github.com/keimaruO/MP4-to-WEBM-GameClip-Converter-Discord)から全てのプロジェクトファイルをダウンロードし、任意の場所に展開してください。
 
 ### 2. ファイルの配置
 
