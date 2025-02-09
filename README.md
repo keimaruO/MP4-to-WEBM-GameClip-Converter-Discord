@@ -17,18 +17,22 @@
 
 ## 📂 インストール方法
 
-python入れてない人は入れてねいれてるひとはそのまま次へ。
+### 1. 必要なファイルの準備
 
-このプロジェクト(https://github.com/keimaruO/MP4-to-WEBM-GameClip-Converter-Discord)をダンロードして任意の場所に展開。
+1. **FFmpegのダウンロード**  
+   - [FFmpeg-Buildsの最新リリースページ](https://github.com/yt-dlp/FFmpeg-Builds/releases/tag/latest)から、使用中のOSに合ったFFmpegビルドをダウンロードしてください。  
+   - **Windowsの場合：**  
+     `ffmpeg-master-latest-win64-gpl-shared.zip` を選び、解凍します。
 
-### 1. FFmpeg実行ファイルの準備
+2. **Pythonのインストール**  
+   - まだPythonをインストールしていない場合は、公式サイトからインストールしてください。
 
-- [FFmpeg-Buildsの最新リリースページ](https://github.com/yt-dlp/FFmpeg-Builds/releases/tag/latest) から、使用しているOSに合ったFFmpegビルドをダウンロードしてください。
-- **Windowsの場合**: `ffmpeg-master-latest-win64-gpl-shared.zip` を選んで解凍します。
-- 解凍後、`ffmpeg.exe`、`ffplay.exe`、`ffprobe.exe` をツールと同じフォルダに配置します。
+3. **プロジェクトのダウンロード**  
+   - [GitHubリポジトリ](https://github.com/keimaruO/MP4-to-WEBM-GameClip-Converter-Discord)からプロジェクトをダウンロードし、任意の場所に展開してください。
+
+### 2. ファイルの配置
 
 - 最終的なディレクトリ構成
-
 
 <pre>
 ├── ffmpeg.exe       # FFmpeg実行ファイル
@@ -41,29 +45,34 @@ python入れてない人は入れてねいれてるひとはそのまま次へ�
 </pre>
 
 
+### 3. ツールの実行
 
+1. **実行方法**  
+   - `start.bat` を実行して、変換したいMP4ファイルを選択してください。
 
-
-
-
-
-### 2. ツールの実行
-
-
-
-- `start.bat` をダブルクリックで実行して、変換したいMP4ファイルを選択します。
-- 変換が終わると、同じフォルダに `output.webm` が保存されます。
+2. **変換完了**  
+   - 変換が終了すると、同じフォルダに `output.webm` が生成されます。
 
 ---
 
-## 🚀 設定（オプション）
+## オプション設定
 
-- **TARGET_SIZE**: 目標ファイルサイズ（デフォルト約9.5MB）
-- **AUDIO_BITRATE**: 音声品質（デフォルト64kbps）
-- **USE_GPU**: GPUによるデコード高速化
+ツールには以下の設定項目があります。必要に応じて値を変更してください。
+
+- **TARGET_SIZE**  
+  目標ファイルサイズ（デフォルト：約9.5MB）
+
+- **AUDIO_BITRATE**  
+  音声のビットレート（デフォルト：64kbps）
+
+- **USE_GPU**  
+  GPUを利用してデコード処理を高速化するオプション
 
 ---
 
-## 📜 ライセンス
+## ライセンス
 
-MIT License（自由に使用・改変可能）
+このツールは **MIT License** の下で公開されています。  
+自由に使用および改変することができます。
+
+---
